@@ -13,6 +13,9 @@ from sklearn.utils.multiclass import unique_labels
 from sklearn.metrics.pairwise import chi2_kernel
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import precision_recall_curve
+
+
 
 def getFiles(train, path):
     images = []
@@ -201,7 +204,7 @@ def trainModel(path, no_clusters, kernel):
     im_features = scale.transform(im_features)
     print("Train images normalized.")
 
-    plotHistogram(im_features, no_clusters)
+    plotHistogram(im_features, no_clusters) 
     print("Features histogram plotted.")
 
     svm = findSVM(im_features, train_labels, kernel)
@@ -216,6 +219,7 @@ def testModel(path, kmeans, scale, svm, im_features, no_clusters, kernel):
 
     count = 0
     true = []
+    false = []
     descriptor_list = []
 
     name_dict =	{
@@ -250,8 +254,7 @@ def testModel(path, kmeans, scale, svm, im_features, no_clusters, kernel):
                 true.append("house_indoor")
             elif("office" in img_path):
                 true.append("office")
-            else:
-                true.append("sea")
+            else: true.append("sea")
 
     descriptors = vstackDescriptors(descriptor_list)
 
@@ -266,8 +269,8 @@ def testModel(path, kmeans, scale, svm, im_features, no_clusters, kernel):
     predictions = [name_dict[str(int(i))] for i in svm.predict(kernel_test)]
     print("Test images classified.")
 
-    plotConfusions(true, predictions)
-    print("Confusion matrixes plotted.")
+    #plotConfusions(true, predictions)
+    #print("Confusion matrixes plotted.")
 
     findAccuracy(true, predictions)
     print("Accuracy calculated.")
@@ -280,11 +283,6 @@ def execute(train_path, test_path, no_clusters, kernel):
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
-
-    #parser.add_argument('--train_path', action="store", dest="train_path", required=True)
-    #parser.add_argument('--test_path', action="store", dest="test_path", required=True)
-    #parser.add_argument('--no_clusters', action="store", dest="no_clusters", default=50)
-    #parser.add_argument('--kernel_type', action="store", dest="kernel_type", default="linear")
 
     train_path = '../dataset/train'
     test_path = '../dataset/test'
